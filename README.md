@@ -2,37 +2,6 @@
 
 > 단순 이동평균 추세 신호를 이용해 선물 가격 데이터에서 전략의 수익·위험 특성을 검증하는 Python 프로젝트
 
-## 30초 실행 확인 (인터넷 불필요)
-
-저장소에 포함된 샘플 가격 데이터로 전체 파이프라인을 바로 확인할 수 있습니다. 샘플 데이터는 **실제 선물 가격이 아니라 실행 재현성 확인용 합성 데이터**입니다.
-
-```bash
-git clone https://github.com/betahedger/futures-trend-backtest.git
-cd futures-trend-backtest
-
-python -m venv .venv
-```
-
-Windows:
-
-```bash
-.venv\Scripts\activate
-pip install -r requirements.txt
-pytest -q
-python main.py --csv data/sample_futures_prices.csv
-```
-
-macOS / Linux:
-
-```bash
-source .venv/bin/activate
-pip install -r requirements.txt
-pytest -q
-python main.py --csv data/sample_futures_prices.csv
-```
-
-정상 실행되면 터미널에 성과지표가 출력되고 `results/` 폴더에 CSV 2개와 그래프 2개가 생성됩니다.
-
 ## 프로젝트 목적
 
 선물 시장에서 가장 기본적인 추세추종 신호가 어떤 수익·위험 특성을 보이는지 직접 확인하기 위해 만든 연구용 백테스트입니다.
@@ -125,42 +94,16 @@ futures-trend-backtest/
 
 ## 실행 방법
 
-가상환경 생성:
-
 ```bash
-python -m venv .venv
-```
-
-Windows:
-
-```bash
-.venv\Scripts\activate
 pip install -r requirements.txt
+
+# 인터넷 없이 샘플 데이터로 실행
+python main.py --csv data/sample_futures_prices.csv
+
+# 실제 선물 데이터
 python main.py --symbol "ES=F" --start 2020-01-01
-```
 
-다른 선물 예시:
-
-```bash
-# 금 선물
-python main.py --symbol "GC=F" --start 2020-01-01
-
-# 원유 선물
-python main.py --symbol "CL=F" --start 2020-01-01
-
-# Long-only 전략
-python main.py --symbol "ES=F" --long-only
-
-# 이동평균 기간 변경
-python main.py --symbol "ES=F" --fast 10 --slow 100
-
-# 직접 보유한 CSV 사용
-python main.py --csv data/my_futures_data.csv
-```
-
-테스트 실행:
-
-```bash
+# 테스트
 pytest -q
 ```
 
