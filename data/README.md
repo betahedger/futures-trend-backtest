@@ -1,9 +1,20 @@
 # Data
 
-기본 실행은 Yahoo Finance를 통해 데이터를 내려받으므로 데이터 파일이 필요하지 않습니다.
-직접 CSV를 사용할 경우 `Date`와 `Close` 열을 포함한 파일을 이 폴더에 둘 수 있습니다.
+기본 실행은 Yahoo Finance를 통해 데이터를 내려받으므로 별도의 시장 데이터 파일이 필요하지 않습니다.
 
-예:
+## sample_futures_prices.csv
+
+면접·검토 환경에서 인터넷 연결 없이 코드가 실행되는지 바로 확인할 수 있도록 **합성 가격 데이터**를 포함했습니다.
+
+- 실제 선물 가격 데이터가 아닙니다.
+- 전략 성과를 주장하기 위한 데이터가 아닙니다.
+- 설치 및 백테스트 파이프라인의 재현성 확인 용도입니다.
+
+```bash
+python main.py --csv data/sample_futures_prices.csv
+```
+
+직접 CSV를 사용할 경우 `Date`와 `Close` 열을 포함한 파일을 이 폴더에 둘 수 있습니다.
 
 ```csv
 Date,Close
