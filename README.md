@@ -168,3 +168,4 @@ out["strategy_return"] = out["strategy_return_gross"] - out["trading_cost"]
 ## 유의사항
 
 본 프로젝트는 학습 및 연구 목적이며 특정 금융상품의 매수·매도를 권유하지 않습니다.
+
