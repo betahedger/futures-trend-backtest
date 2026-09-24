@@ -6,7 +6,7 @@ from src.backtest import BacktestConfig, performance_metrics, run_backtest
 
 def sample_prices(n=200):
     idx = pd.date_range("2024-01-01", periods=n, freq="B")
-    # Deterministic, smooth synthetic series for unit testing only.
+    # 단위 테스트용으로만 사용하는 결정론적 합성 가격계열입니다.
     trend = np.linspace(100.0, 130.0, n)
     wave = 2.0 * np.sin(np.linspace(0, 10, n))
     return pd.DataFrame({"Close": trend + wave}, index=idx)

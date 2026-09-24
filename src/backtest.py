@@ -16,16 +16,16 @@ class BacktestConfig:
 
     def validate(self) -> None:
         if self.fast_window <= 0 or self.slow_window <= 0:
-            raise ValueError("Moving-average windows must be positive.")
+            raise ValueError("이동평균 기간은 0보다 커야 합니다.")
         if self.fast_window >= self.slow_window:
-            raise ValueError("fast_window must be smaller than slow_window.")
+            raise ValueError("fast_window는 slow_window보다 작아야 합니다.")
         if self.fee_bps < 0 or self.slippage_bps < 0:
-            raise ValueError("Trading costs cannot be negative.")
+            raise ValueError("거래비용은 음수가 될 수 없습니다.")
 
 
 def _validate_price_frame(df: pd.DataFrame) -> pd.DataFrame:
     if "Close" not in df.columns:
-        raise ValueError("Input data must contain a 'Close' column.")
+        raise ValueError("입력 데이터에는 'Close' 열이 필요합니다.")
 
     out = df.copy()
     out = out.sort_index()
@@ -33,18 +33,18 @@ def _validate_price_frame(df: pd.DataFrame) -> pd.DataFrame:
     out = out.dropna(subset=["Close"])
 
     if len(out) < 3:
-        raise ValueError("Not enough valid observations.")
+        raise ValueError("유효한 관측치가 부족합니다.")
     if (out["Close"] <= 0).any():
-        raise ValueError("Close prices must be positive.")
+        raise ValueError("종가는 0보다 커야 합니다.")
     return out
 
 
 def run_backtest(df: pd.DataFrame, config: BacktestConfig) -> pd.DataFrame:
-    """Run a moving-average trend-following backtest.
+    """이동평균 추세추종 전략 백테스트를 실행합니다.
 
-    Signal at t is applied from t+1 by shifting the position one period.
-    This prevents the strategy from trading on information from the same
-    closing price used to compute the moving averages.
+    t 시점 종가로 계산한 신호를 한 시점 지연해 t+1부터 포지션에 반영합니다.
+    이를 통해 이동평균 계산에 사용된 당일 종가 정보를 같은 날 수익률에
+    적용하는 미래정보 참조 문제를 방지합니다.
     """
     config.validate()
     out = _validate_price_frame(df)
@@ -57,14 +57,14 @@ def run_backtest(df: pd.DataFrame, config: BacktestConfig) -> pd.DataFrame:
     else:
         signal = np.where(out["fast_ma"] > out["slow_ma"], 1.0, 0.0)
 
-    # No position until the slow moving average is available.
+    # 장기 이동평균을 계산할 수 있기 전까지는 포지션을 보유하지 않습니다.
     out["signal"] = pd.Series(signal, index=out.index).where(out["slow_ma"].notna(), 0.0)
 
-    # Critical anti-look-ahead step: today's signal becomes tomorrow's position.
+    # 핵심: 오늘 계산한 신호는 다음 거래일부터 포지션에 반영합니다.
     out["position"] = out["signal"].shift(1).fillna(0.0)
     out["asset_return"] = out["Close"].pct_change().fillna(0.0)
 
-    # Turnover is the absolute change in exposure. Switching -1 -> +1 = 2 units.
+    # 회전율은 포지션 변화의 절댓값입니다. -1에서 +1로 전환하면 2로 계산합니다.
     out["turnover"] = out["position"].diff().abs().fillna(out["position"].abs())
     one_way_cost = (config.fee_bps + config.slippage_bps) / 10_000.0
     out["trading_cost"] = out["turnover"] * one_way_cost
@@ -80,7 +80,7 @@ def run_backtest(df: pd.DataFrame, config: BacktestConfig) -> pd.DataFrame:
 def performance_metrics(result: pd.DataFrame, periods_per_year: int = 252) -> dict[str, float]:
     r = result["strategy_return"].dropna()
     if r.empty:
-        raise ValueError("No strategy returns available.")
+        raise ValueError("계산 가능한 전략수익률이 없습니다.")
 
     equity = (1.0 + r).cumprod()
     n = len(r)

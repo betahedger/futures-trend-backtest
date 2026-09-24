@@ -11,10 +11,10 @@ from src.reporting import save_outputs
 
 
 def parse_args() -> argparse.Namespace:
-    p = argparse.ArgumentParser(description="Backtest a moving-average trend strategy on futures data.")
+    p = argparse.ArgumentParser(description="선물 가격 데이터에서 이동평균 추세추종 전략을 백테스트합니다.")
     source = p.add_mutually_exclusive_group()
-    source.add_argument("--csv", type=str, help="Local CSV with Date and Close columns.")
-    source.add_argument("--symbol", type=str, default="ES=F", help="Yahoo Finance futures ticker. Default: ES=F")
+    source.add_argument("--csv", type=str, help="Date와 Close 열을 포함한 로컬 CSV 파일")
+    source.add_argument("--symbol", type=str, default="ES=F", help="Yahoo Finance 선물 티커 (기본값: ES=F)")
     p.add_argument("--start", default="2020-01-01")
     p.add_argument("--end", default=None)
     p.add_argument("--fast", type=int, default=20)
@@ -51,7 +51,7 @@ def main() -> None:
 
     display = pd.Series(metrics, name="value")
     print(display.to_string())
-    print(f"\nSaved outputs to: {Path(args.output_dir).resolve()}")
+    print(f"\n결과 저장 위치: {Path(args.output_dir).resolve()}")
 
 
 if __name__ == "__main__":
